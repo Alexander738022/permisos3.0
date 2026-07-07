@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 
@@ -19,21 +18,18 @@ if (!in_array($cargos_usuario, $cargos_autorizados)) {
     exit();
 }
 
-// 2. Conexión a la base de datos
-$conexion = new mysqli("localhost", "root", "", "proyecto");
-
-if ($conexion->connect_error) {
-    die("Error de conexión: " . $conexion->connect_error);
-}
+// 2. Conexión a la base de datos (db.php ya maneja internamente los errores de conexión)
+include 'db.php';
 
 $conexion->query("SET lc_time_names = 'es_ES'");
 
 // --- EXTRACCIÓN DE DATOS CORREGIDA ---
 
-// 1. Análisis Mensual (Suma de días solicitados)
+// 1. Análisis Mensual (Suma de días solicitados) 
+// CORRECCIÓN: Se añade MONTHNAME al GROUP BY para cumplir estrictamente con MySQL 8+
 $res_mes = $conexion->query("SELECT MONTHNAME(fecha_solicitud) as etiqueta, SUM(dias_solicitados) as total 
                              FROM permisos 
-                             GROUP BY MONTH(fecha_solicitud) 
+                             GROUP BY MONTH(fecha_solicitud), MONTHNAME(fecha_solicitud)
                              ORDER BY MONTH(fecha_solicitud)");
 $labels_mes = []; $data_mes = [];
 if($res_mes){
@@ -70,7 +66,6 @@ if($res_raz){
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
