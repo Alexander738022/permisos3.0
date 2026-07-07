@@ -1,0 +1,7 @@
+{
+    "require": {
+        "tecnickcom/tcpdf": "^6.10",
+        "setasign/fpdi": "^2.6",
+        "phpseclib/phpseclib": "^3.0"
+    }
+}
