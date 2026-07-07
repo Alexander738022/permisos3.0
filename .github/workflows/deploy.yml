@@ -20,7 +20,8 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           port: 1003
           script: |
-            cd /var/www/permisos3.0
-            git pull origin main
+            mkdir -p ~/permisos3.0
+            cd ~/permisos3.0
+            git pull origin main || git clone https://github.com/tu_usuario/tu_repositorio.git .
             docker-compose up -d --build
             docker image prune -f
