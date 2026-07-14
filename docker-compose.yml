@@ -1,30 +1,30 @@
 version: '3.8'
 
 services:
-  # Servidor PHP para tu sistema permisos3.0
+  # Servidor PHP para tu sistema web
   web:
     build: .
     container_name: permisos_web
+    restart: unless-stopped
     ports:
-      - "8080:80"
-    volumes:
-      - .:/var/www/html
-      - /var/www/html/vendor
+      - "80:80"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.permisos-web.rule=Host(`Alex-Geremy.byronrm.com`)"
+      - "traefik.http.routers.permisos-web.entrypoints=web"
     depends_on:
       - db
 
   # Servidor de Base de Datos MySQL 8.0
   db:
-       image: mysql:8.0
-       container_name: permisos_db
-       restart: always
-       environment:
-         MYSQL_ROOT_PASSWORD: root_password_segura
-         MYSQL_DATABASE: proyecto # <-- Aquí Docker creará automáticamente la base de datos "proyecto"
-       ports:
-         - "3306:3306"
-       volumes:
-         - db_data:/var/lib/mysql
+    image: mysql:8.0
+    container_name: permisos_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password_segura
+      MYSQL_DATABASE: proyecto
+    volumes:
+      - db_data:/var/lib/mysql
 
   # Administrador gráfico de Base de Datos (phpMyAdmin)
   phpmyadmin:
@@ -32,10 +32,16 @@ services:
     container_name: permisos_phpmyadmin
     restart: always
     ports:
-      - "80:80"
+      - "8082:80"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.permisos-pma.rule=Host(`Alex-Jona.byronrm.com`)"
+      - "traefik.http.routers.permisos-pma.entrypoints=web"
     environment:
       PMA_HOST: db
       MYSQL_ROOT_PASSWORD: root_password_segura
+    depends_on:
+      - db
 
 volumes:
   db_data:
