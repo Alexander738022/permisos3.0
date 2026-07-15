@@ -1,4 +1,5 @@
 <?php
+ob_start();
 session_start();
 include "db.php";
 
@@ -1699,3 +1700,6 @@ nav {
 
 </body>
 </html>
+<?php
+ob_end_flush();
+?>

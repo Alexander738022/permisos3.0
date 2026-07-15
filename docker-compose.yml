@@ -1,47 +1,85 @@
-version: '3.8'
-
 services:
-  # Servidor PHP para tu sistema web
-  web:
-    build: .
-    container_name: permisos_web
-    restart: unless-stopped
-    ports:
-      - "80:80"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.permisos-web.rule=Host(`alex-geremy.byronrm.com`)"
-      - "traefik.http.routers.permisos-web.entrypoints=web"
-    depends_on:
-      - db
-
-  # Servidor de Base de Datos MySQL 8.0
+  # 1. Base de Datos MySQL
   db:
     image: mysql:8.0
     container_name: permisos_db
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root_password_segura
-      MYSQL_DATABASE: proyecto
+      MYSQL_DATABASE: permisos_db
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - default
 
-  # Administrador gráfico de Base de Datos (phpMyAdmin)
+  # 2. Tu Sistema Web PHP
+  web:
+    build: .
+    container_name: permisos_web
+    restart: always
+    depends_on:
+      - db
+    networks:
+      - default
+      - web_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-public" # <-- AGREGA ESTA LÍNEA
+      - "traefik.http.routers.permisos-web.rule=Host(`alex-geremy.byronrm.com`)"
+      - "traefik.http.routers.permisos-web.entrypoints=websecure"
+      - "traefik.http.routers.permisos-web.tls=true"
+      - "traefik.http.routers.permisos-web.tls.certresolver=myresolver"
+      - "traefik.http.services.permisos-web.loadbalancer.server.port=80"
+
+  # 3. phpMyAdmin
   phpmyadmin:
     image: phpmyadmin:latest
     container_name: permisos_phpmyadmin
     restart: always
-    ports:
-      - "8082:80"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.permisos-pma.rule=Host(`alex-jona.byronrm.com`)"
-      - "traefik.http.routers.permisos-pma.entrypoints=web"
     environment:
       PMA_HOST: db
-      MYSQL_ROOT_PASSWORD: root_password_segura
-    depends_on:
-      - db
+      PMA_USER: root
+      PMA_PASSWORD: root_password_segura
+    networks:
+      - default
+      - web_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-public" # <-- AGREGA ESTA LÍNEA
+      - "traefik.http.routers.permisos-pma.rule=Host(`alex-jona.byronrm.com`)"
+      - "traefik.http.routers.permisos-pma.entrypoints=websecure"
+      - "traefik.http.routers.permisos-pma.tls=true"
+      - "traefik.http.routers.permisos-pma.tls.certresolver=myresolver"
+      - "traefik.http.services.permisos-pma.loadbalancer.server.port=80"
+
+  # 4. Portainer
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: permisos_portainer
+    restart: always
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - default
+      - web_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-public" # <-- AGREGA ESTA LÍNEA
+      - "traefik.http.routers.permisos-portainer.rule=Host(`alexportainer.byronrm.com`)"
+      - "traefik.http.routers.permisos-portainer.entrypoints=websecure"
+      - "traefik.http.routers.permisos-portainer.tls=true"
+      - "traefik.http.routers.permisos-portainer.tls.certresolver=myresolver"
+      - "traefik.http.services.permisos-portainer.loadbalancer.server.port=9000"
 
 volumes:
   db_data:
+  portainer_data:
+
+networks:
+  default:
+  web_network:
+    external: true
+    name: traefik-public

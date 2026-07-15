@@ -1,14 +1,18 @@
 <?php
-// Datos adaptados para Docker (sin tocar la estructura de tu código)
-$host = "db"; // Docker busca el contenedor 'db' en lugar de 'localhost'
+// Datos de conexión adaptados para tu contenedor Docker
+$host = "db"; 
 $user = "root";
-$pass = "root_password_segura"; // La contraseña que le asignamos en el docker-compose
-$db = "proyecto";
+$pass = "root_password_segura"; // La misma contraseña de tu docker-compose.yml
+$db   = "proyecto";             // El nombre de la base de datos en phpMyAdmin
 
-// Tu misma conexión original
+// Crear la conexión con la base de datos
 $conn = new mysqli($host, $user, $pass, $db);
+
+// Comprobar si hay errores de conexión
 if ($conn->connect_error) {
     die("Error de conexión en Docker: " . $conn->connect_error);
 }
+
+// Variable de conexión final para tu sistema
 $conexion = $conn; 
 ?>

@@ -25,3 +25,5 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction || true
 
 # 6. Dar permisos correctos a Apache
 RUN chown -R www-data:www-data /var/www/html
+
+COPY uploads.ini /usr/local/etc/php/conf.d/
