@@ -122,7 +122,7 @@ services:
     labels:
       - "traefik.enable=true"
       # Configuración para el Backend
-      - "traefik.http.routers.backalexis.rule=Host(`backalexis.byronrm.com`)"
+      - "traefik.http.routers.backalexis.rule=Host(`backalex.byronrm.com`)"
       - "traefik.http.routers.backalexis.entrypoints=websecure"
       - "traefik.http.routers.backalexis.tls.certresolver=myresolver"
       - "traefik.http.services.backalexis.loadbalancer.server.port=80"
