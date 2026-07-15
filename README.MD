@@ -71,8 +71,7 @@ Para acceder de forma aislada e independiente a cada componente, se mapearon los
 
 | Servicio | Subdominio de Acceso | Protocolo | Descripción |
 | :--- | :--- | :--- | :--- |
-| **Portainer** | `https://alexportainer.byronrm.com` | HTTPS (SSL) | Consola de administración de Docker |
-| **API Backend** | `https://backalexis.byronrm.com` | HTTPS (SSL) | Punto de acceso para la API JSON de TaskFlow |
+| **Portainer** | `https://alexportainer.byronrm.com` | HTTPS (SSL) | Consola de administración de Docker ||
 | **Frontend/Web** | `https://permisos.byronrm.com` | HTTPS (SSL) | Interfaz de usuario para la solicitud de permisos |
 | **phpMyAdmin** | `https://phpmyadmin.byronrm.com` | HTTPS (SSL) | Gestor de Base de Datos relacional |
 
